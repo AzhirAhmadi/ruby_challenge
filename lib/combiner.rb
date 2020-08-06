@@ -13,7 +13,8 @@ class Combiner
 	def key(value)
 		value.nil? ? nil : @key_extractor.call(value)
 	end
-
+	
+	# merge sort
 	def combine(*enumerators)
 		Enumerator.new do |yielder|
 			last_values = Array.new(enumerators.size)
