@@ -1,4 +1,7 @@
-require File.expand_path('lib/combiner',File.dirname(__FILE__))
+require File.expand_path('combiner',File.dirname(__FILE__))
+require File.expand_path('float',File.dirname(__FILE__))
+require File.expand_path('string',File.dirname(__FILE__))
+require File.expand_path('csv_helper',File.dirname(__FILE__))
 require 'csv'
 require 'date'
 require 'pry'
@@ -20,9 +23,7 @@ class Modifier
   end
 
   def modify(output, input)
-    input = sort(input)
-
-    input_enumerator = lazy_read(input)
+    input_enumerator = CsvHelper.lazy_read(input)
 
     combiner = Combiner.new do |value|
       value[KEYWORD_UNIQUE_ID]
@@ -39,15 +40,17 @@ class Modifier
         end
       end
     end
+    save_to_file_with_limit_line(merger,output.gsub('.txt', ''), LINES_PER_FILE)
+  end
 
+  def save_to_file_with_limit_line(merger, file_name, lines_per_file)
     done = false
     file_index = 0
-    file_name = output.gsub('.txt', '')
     while not done do
       CSV.open(file_name + "_#{file_index}.txt", "wb", { :col_sep => "\t", :headers => :first_row, :row_sep => "\r\n" }) do |csv|
         headers_written = false
         line_count = 0
-        while line_count < LINES_PER_FILE
+        while line_count < lines_per_file
           begin
             merged = merger.next
             if not headers_written
@@ -115,40 +118,5 @@ class Modifier
       end
     end
     result
-  end
-
-  DEFAULT_CSV_OPTIONS = { :col_sep => "\t", :headers => :first_row }
-
-  #read as CSV data
-  def parse(file)
-    CSV.read(file, DEFAULT_CSV_OPTIONS)
-  end
-
-  def lazy_read(file)
-    Enumerator.new do |yielder|
-      CSV.foreach(file, DEFAULT_CSV_OPTIONS) do |row|
-        yielder.yield(row)
-      end
-    end
-  end
-
-  def write(content, headers, output)
-    CSV.open(output, "wb", { :col_sep => "\t", :headers => :first_row, :row_sep => "\r\n" }) do |csv|
-      csv << headers
-      content.each do |row|
-        csv << row
-      end
-    end
-  end
-
-  public
-  def sort(file)
-    output = "#{file}.sorted"
-    content_as_table = parse(file)
-    headers = content_as_table.headers
-    index_of_key = headers.index('Clicks')
-    content = content_as_table.sort_by { |a| -a[index_of_key].to_i }
-    write(content, headers, output)
-    return output
   end
 end
