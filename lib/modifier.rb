@@ -1,6 +1,5 @@
 require File.expand_path('combiner',File.dirname(__FILE__))
-require File.expand_path('float',File.dirname(__FILE__))
-require File.expand_path('string',File.dirname(__FILE__))
+require File.expand_path('merger',File.dirname(__FILE__))
 require File.expand_path('csv_helper',File.dirname(__FILE__))
 require 'csv'
 require 'date'
@@ -8,42 +7,21 @@ require 'pry'
 
 
 class Modifier
+  attr_accessor :lines_per_file
 
-  KEYWORD_UNIQUE_ID = 'Keyword Unique ID'
-  LAST_VALUE_WINS = ['Account ID', 'Account Name', 'Campaign', 'Ad Group', 'Keyword', 'Keyword Type', 'Subid', 'Paused', 'Max CPC', 'Keyword Unique ID', 'ACCOUNT', 'CAMPAIGN', 'BRAND', 'BRAND+CATEGORY', 'ADGROUP', 'KEYWORD']
-  LAST_REAL_VALUE_WINS = ['Last Avg CPC', 'Last Avg Pos']
-  INT_VALUES = ['Clicks', 'Impressions', 'ACCOUNT - Clicks', 'CAMPAIGN - Clicks', 'BRAND - Clicks', 'BRAND+CATEGORY - Clicks', 'ADGROUP - Clicks', 'KEYWORD - Clicks']
-  FLOAT_VALUES = ['Avg CPC', 'CTR', 'Est EPC', 'newBid', 'Costs', 'Avg Pos']
-
-  LINES_PER_FILE = 120000
-
-  def initialize(saleamount_factor, cancellation_factor)
-    @saleamount_factor = saleamount_factor
-    @cancellation_factor = cancellation_factor
+  def initialize(lines_per_file)
+    @lines_per_file = lines_per_file
   end
 
-  def modify(output, input)
+  def modify(output, input, key_checker_list)
     input_enumerator = CsvHelper.lazy_read(input)
+    combined = combiner(input_enumerator)
+    merged = Merger.new(key_checker_list).merge(combined)
 
-    combiner = Combiner.new do |value|
-      value[KEYWORD_UNIQUE_ID]
-    end.combine(input_enumerator)
-
-    merger = Enumerator.new do |yielder|
-      while true
-        begin
-          list_of_rows = combiner.next
-          merged = combine_hashes(list_of_rows)
-          yielder.yield(combine_values(merged))
-        rescue StopIteration
-          break
-        end
-      end
-    end
-    save_to_file_with_limit_line(merger,output.gsub('.txt', ''), LINES_PER_FILE)
+    save_to_file_with_limit_line(merged,output.gsub('.txt', ''))
   end
 
-  def save_to_file_with_limit_line(merger, file_name, lines_per_file)
+  def save_to_file_with_limit_line(merger, file_name)
     done = false
     file_index = 0
     while not done do
@@ -72,51 +50,17 @@ class Modifier
 
   private
 
-  def combine(merged)
-    result = []
-    merged.each do |_, hash|
-      result << combine_values(hash)
-    end
-    result
-  end
-
-  def combine_values(hash)
-    LAST_VALUE_WINS.each do |key|
-      hash[key] = hash[key].last
-    end
-    LAST_REAL_VALUE_WINS.each do |key|
-      hash[key] = hash[key].select {|v| not (v.nil? or v == 0 or v == '0' or v == '')}.last
-    end
-    INT_VALUES.each do |key|
-      hash[key] = hash[key][0].to_s
-    end
-    FLOAT_VALUES.each do |key|
-      hash[key] = hash[key][0].from_german_to_f.to_german_s
-    end
-    ['number of commissions'].each do |key|
-      hash[key] = (@cancellation_factor * hash[key][0].from_german_to_f).to_german_s
-    end
-    ['Commission Value', 'ACCOUNT - Commission Value', 'CAMPAIGN - Commission Value', 'BRAND - Commission Value', 'BRAND+CATEGORY - Commission Value', 'ADGROUP - Commission Value', 'KEYWORD - Commission Value'].each do |key|
-      hash[key] = (@cancellation_factor * @saleamount_factor * hash[key][0].from_german_to_f).to_german_s
-    end
-    hash
-  end
-
-  def combine_hashes(list_of_rows)
-    keys = []
-    list_of_rows.each do |row|
-      next if row.nil?
-      row.headers.each do |key|
-        keys << key
-      end
-    end
-    result = {}
-    keys.each do |key|
-      result[key] = []
-      list_of_rows.each do |row|
-        result[key] << (row.nil? ? nil : row[key])
-      end
-    end
-    result
-  end
+  def combiner(input_enumerator)
+    Combiner.new do |value|
+      value[KEYWORD_UNIQUE_ID]
+    end.combine(input_enumerator)
+  end  
 end
+
+# def combine(merged)
+#   result = []
+#   merged.each do |_, hash|
+#     result << combine_values(hash)
+#   end
+#   result
+# end

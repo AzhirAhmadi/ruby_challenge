@@ -13,3 +13,13 @@ Please do the following:
 - create a git repository containing the initial files and do regular
   and small commits to log your process.
 - send me your git bundle containing your changes.
+
+
+
+
+
+
+Extra definition
+
+-The project read a file and parse it azz CSV then sort rows by the given column(KEYWORD_UNIQUE_ID).
+-The sorted output goe to some file which are limited by user(120000line) and thay will be indexed from 0 to ...
