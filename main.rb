@@ -53,7 +53,7 @@ def key_checker_list(cancellation_factor, saleamount_factor)
   list << (KeyChecker.new COMMISSIONS, (Proc.new {|value| (cancellation_factor * saleamount_factor * value[0].from_german_to_f).to_german_s}))
 end
 
-modified = input = latest('2012-07-27_2012-10-10_performancedata')
+modified = input = latest('project_2012-07-27_2012-10-10_performancedata')
 modifier = Modifier.new(120000)
 modifier.modify(modified, sort(input), key_checker_list(1, 0.4))
 

@@ -21,5 +21,5 @@ Please do the following:
 
 Extra definition
 
--The project read a file and parse it azz CSV then sort rows by the given column(KEYWORD_UNIQUE_ID).
--The sorted output goe to some file which are limited by user(120000line) and thay will be indexed from 0 to ...
+-The project read a file and parse it as CSV then sort rows by the given column(KEYWORD_UNIQUE_ID).
+-The sorted output goes to some files which are limited by the user(120000line) and they will be indexed from 0 to ...
