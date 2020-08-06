@@ -23,7 +23,7 @@ class Merger
   private
 
   def combine_values(hash)
-    key_checker_list.each{|key_checker| key_checker.call(hash) }
+    key_checker_list.each{|key_checker| hash = key_checker.call(hash) }
 
     hash
   end

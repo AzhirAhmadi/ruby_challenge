@@ -10,5 +10,7 @@ class KeyChecker
     key_list.each do |key|
       hash[key] = procedure.call(hash[key])
     end
+    
+    hash
   end
 end
