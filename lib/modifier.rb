@@ -56,11 +56,3 @@ class Modifier
     end.combine(input_enumerator)
   end  
 end
-
-# def combine(merged)
-#   result = []
-#   merged.each do |_, hash|
-#     result << combine_values(hash)
-#   end
-#   result
-# end
