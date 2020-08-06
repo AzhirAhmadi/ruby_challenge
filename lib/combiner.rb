@@ -20,39 +20,49 @@ class Combiner
 			last_values = Array.new(enumerators.size)
 			done = enumerators.all? { |enumerator| enumerator.nil? }
 			while not done
-				last_values.each_with_index do |value, index|
-					if value.nil? and not enumerators[index].nil?
-						begin
-							last_values[index] = enumerators[index].next
-						rescue StopIteration
-							enumerators[index] = nil
-						end
-					end
-				end
+				last_values, enumerators = fetch_next(last_values, enumerators)
 
 				done = enumerators.all? { |enumerator| enumerator.nil? } and last_values.compact.empty?
 				unless done
-					min_key = last_values.map { |e| key(e) }.min do |a, b|
-						if a.nil? and b.nil?
-							0
-						elsif a.nil?
-							1
-						elsif b.nil?
-							-1
-						else
-							a <=> b
-						end
-					end
-					values = Array.new(last_values.size)
-					last_values.each_with_index do |value, index|
-						if key(value) == min_key
-							values[index] = value
-							last_values[index] = nil
-						end
-					end
+					last_values, values = get_mins(last_values)
 					yielder.yield(values)
 				end
 			end
 		end
+	end
+
+	def fetch_next(last_values, enumerators)
+		last_values.each_with_index do |value, index|
+			if value.nil? and not enumerators[index].nil?
+				begin
+					last_values[index] = enumerators[index].next
+				rescue StopIteration
+					enumerators[index] = nil
+				end
+			end
+		end
+		return last_values, enumerators
+	end
+
+	def get_mins(last_values)
+		min_key = last_values.map { |e| key(e) }.min do |a, b|
+			if a.nil? and b.nil?
+				0
+			elsif a.nil?
+				1
+			elsif b.nil?
+				-1
+			else
+				a <=> b
+			end
+		end
+		values = Array.new(last_values.size)
+		last_values.each_with_index do |value, index|
+			if key(value) == min_key
+				values[index] = value
+				last_values[index] = nil
+			end
+		end
+		return last_values, values
 	end
 end
