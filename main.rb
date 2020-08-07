@@ -7,7 +7,7 @@ require File.expand_path('lib/modifier',File.dirname(__FILE__))
 require File.expand_path('lib/csv_helper',File.dirname(__FILE__))
 require File.expand_path('lib/float',File.dirname(__FILE__))
 require File.expand_path('lib/string',File.dirname(__FILE__))
-require File.expand_path('lib/key_checker',File.dirname(__FILE__))
+require File.expand_path('lib/hash_modifier',File.dirname(__FILE__))
 
 
 def latest(name)
