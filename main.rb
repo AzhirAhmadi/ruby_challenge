@@ -43,7 +43,7 @@ FLOAT_VALUES = ['Avg CPC', 'CTR', 'Est EPC', 'newBid', 'Costs', 'Avg Pos']
 COMMISSIONS = ['number of commissions']
 COMMISSION_VALUE = ['Commission Value', 'ACCOUNT - Commission Value', 'CAMPAIGN - Commission Value', 'BRAND - Commission Value', 'BRAND+CATEGORY - Commission Value', 'ADGROUP - Commission Value', 'KEYWORD - Commission Value']
 
-def key_checker_list(cancellation_factor, saleamount_factor)
+def hash_modifier_list(cancellation_factor, saleamount_factor)
   list = []
   list << (HashModifier.new LAST_VALUE_WINS, (Proc.new {|value| value.last }))
   list << (HashModifier.new LAST_REAL_VALUE_WINS, (Proc.new {|value| value.select {|v| not (v.nil? or v == 0 or v == '0' or v == '')}.last }))
@@ -55,6 +55,6 @@ end
 
 modified = input = latest('project_2012-07-27_2012-10-10_performancedata')
 modifier = Modifier.new(120000)
-modifier.modify(modified, sort(input), key_checker_list(1, 0.4))
+modifier.modify(modified, sort(input), hash_modifier_list(1, 0.4))
 
 puts 'DONE modifying'

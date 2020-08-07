@@ -13,10 +13,10 @@ class Modifier
     @lines_per_file = lines_per_file
   end
 
-  def modify(output, input, key_checker_list)
+  def modify(output, input, hash_modifier_list)
     input_enumerator = CsvHelper.lazy_read(input)
     combined = combiner(input_enumerator)
-    merged = Merger.new(key_checker_list).merge(combined)
+    merged = Merger.new(hash_modifier_list).merge(combined)
 
     save_to_file_with_limit_line(merged,output.gsub('.txt', ''))
   end
