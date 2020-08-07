@@ -45,12 +45,12 @@ COMMISSION_VALUE = ['Commission Value', 'ACCOUNT - Commission Value', 'CAMPAIGN 
 
 def key_checker_list(cancellation_factor, saleamount_factor)
   list = []
-  list << (KeyChecker.new LAST_VALUE_WINS, (Proc.new {|value| value.last }))
-  list << (KeyChecker.new LAST_REAL_VALUE_WINS, (Proc.new {|value| value.select {|v| not (v.nil? or v == 0 or v == '0' or v == '')}.last }))
-  list << (KeyChecker.new INT_VALUES, (Proc.new {|value| value[0].to_s }))
-  list << (KeyChecker.new FLOAT_VALUES, (Proc.new {|value| value[0].from_german_to_f.to_german_s }))
-  list << (KeyChecker.new COMMISSIONS, (Proc.new {|value| (cancellation_factor * value[0].from_german_to_f).to_german_s }))
-  list << (KeyChecker.new COMMISSIONS, (Proc.new {|value| (cancellation_factor * saleamount_factor * value[0].from_german_to_f).to_german_s}))
+  list << (HashModifier.new LAST_VALUE_WINS, (Proc.new {|value| value.last }))
+  list << (HashModifier.new LAST_REAL_VALUE_WINS, (Proc.new {|value| value.select {|v| not (v.nil? or v == 0 or v == '0' or v == '')}.last }))
+  list << (HashModifier.new INT_VALUES, (Proc.new {|value| value[0].to_s }))
+  list << (HashModifier.new FLOAT_VALUES, (Proc.new {|value| value[0].from_german_to_f.to_german_s }))
+  list << (HashModifier.new COMMISSIONS, (Proc.new {|value| (cancellation_factor * value[0].from_german_to_f).to_german_s }))
+  list << (HashModifier.new COMMISSIONS, (Proc.new {|value| (cancellation_factor * saleamount_factor * value[0].from_german_to_f).to_german_s}))
 end
 
 modified = input = latest('project_2012-07-27_2012-10-10_performancedata')

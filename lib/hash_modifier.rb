@@ -1,4 +1,4 @@
-class KeyChecker
+class HashModifier
   attr_accessor :key_list, :procedure
 
   def initialize(key_list ,procedure)
@@ -6,11 +6,12 @@ class KeyChecker
 		@procedure = procedure
   end
   
-  def call(hash)
+  def modify(hash)
+    result = hash.clone
     key_list.each do |key|
-      hash[key] = procedure.call(hash[key])
+      result[key] = procedure.call(hash[key])
     end
     
-    hash
+    result
   end
 end
