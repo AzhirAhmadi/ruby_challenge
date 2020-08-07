@@ -22,4 +22,5 @@ Please do the following:
 Extra definition
 
 -The project read a file and parse it as CSV then sort rows by the given column(KEYWORD_UNIQUE_ID).
+-Extract some data by main.rb#hash_modifier_list 
 -The sorted output goes to some files which are limited by the user(120000line) and they will be indexed from 0 to ...
