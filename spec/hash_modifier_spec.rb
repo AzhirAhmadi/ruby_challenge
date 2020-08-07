@@ -4,8 +4,8 @@ require 'pry'
 
 
 describe HashModifier do
-	context "#call" do
-      it "should apply changes to all hash elements" do
+	context '#call' do
+      it 'should apply changes to all hash elements' do
 
         hash = {key1: 1, key2: 2}
         
@@ -18,7 +18,7 @@ describe HashModifier do
         end
       end
 
-      it "should apply changes to selected hash elements " do
+      it 'should apply changes to selected hash elements' do
 
         hash = {key1: 1, key2: 2}
         

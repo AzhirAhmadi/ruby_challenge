@@ -1,6 +1,6 @@
 class CsvHelper
 
-    DEFAULT_CSV_OPTIONS = { :col_sep => "\t", :headers => :first_row }
+    DEFAULT_CSV_OPTIONS = { :col_sep => '\t', :headers => :first_row }
 
     #read as CSV data
     def self.parse(file)
@@ -16,7 +16,7 @@ class CsvHelper
     end
   
     def self.write(content, headers, output)
-      CSV.open(output, "wb", { :col_sep => "\t", :headers => :first_row, :row_sep => "\r\n" }) do |csv|
+      CSV.open(output, 'wb', { :col_sep => '\t', :headers => :first_row, :row_sep => '\r\n' }) do |csv|
         csv << headers
         content.each do |row|
           csv << row

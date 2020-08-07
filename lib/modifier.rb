@@ -25,7 +25,7 @@ class Modifier
     done = false
     file_index = 0
     while not done do
-      CSV.open(file_name + "_#{file_index}.txt", "wb", { :col_sep => "\t", :headers => :first_row, :row_sep => "\r\n" }) do |csv|
+      CSV.open(file_name + "_#{file_index}.txt", 'wb', { :col_sep => '\t', :headers => :first_row, :row_sep => '\r\n' }) do |csv|
         headers_written = false
         line_count = 0
         while line_count < lines_per_file

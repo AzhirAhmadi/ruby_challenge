@@ -11,7 +11,7 @@ require File.expand_path('lib/key_checker',File.dirname(__FILE__))
 
 
 def latest(name)
-  files = Dir["#{ ENV["HOME"] }/workspace/*#{name}*.txt"]
+  files = Dir["#{ ENV['HOME'] }/workspace/*#{name}*.txt"]
   files.sort_by! do |file|
     last_date = /\d+-\d+-\d+_[[:alpha:]]+\.txt$/.match file
 
@@ -57,4 +57,4 @@ modified = input = latest('project_2012-07-27_2012-10-10_performancedata')
 modifier = Modifier.new(120000)
 modifier.modify(modified, sort(input), key_checker_list(1, 0.4))
 
-puts "DONE modifying"
+puts 'DONE modifying'
