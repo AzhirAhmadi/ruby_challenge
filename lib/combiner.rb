@@ -4,6 +4,8 @@
 # - block combining two elements having the same key or a single element, if there is no partner
 # output:
 # - enumerator for the combined elements
+
+require 'pry'
 class Combiner
 
 	def initialize(&key_extractor)
@@ -14,7 +16,6 @@ class Combiner
 		value.nil? ? nil : @key_extractor.call(value)
 	end
 	
-	# merge sort
 	def combine(*enumerators)
 		Enumerator.new do |yielder|
 			last_values = Array.new(enumerators.size)
@@ -24,7 +25,7 @@ class Combiner
 
 				done = enumerators.all? { |enumerator| enumerator.nil? } and last_values.compact.empty?
 				unless done
-					last_values, values = get_mins(last_values)
+					last_values, values = get_mins_list(last_values)
 					yielder.yield(values)
 				end
 			end
@@ -44,19 +45,11 @@ class Combiner
 		return last_values, enumerators
 	end
 
-	def get_mins(last_values)
-		min_key = last_values.map { |e| key(e) }.min do |a, b|
-			if a.nil? and b.nil?
-				0
-			elsif a.nil?
-				1
-			elsif b.nil?
-				-1
-			else
-				a <=> b
-			end
-		end
+	def get_mins_list(last_values)
+		min_key = last_values.map { |e| key(e) }.min{|a, b| compare(a, b)} 
+
 		values = Array.new(last_values.size)
+
 		last_values.each_with_index do |value, index|
 			if key(value) == min_key
 				values[index] = value
@@ -64,5 +57,17 @@ class Combiner
 			end
 		end
 		return last_values, values
+	end
+
+	def compare(a, b)
+		if a.nil? and b.nil?
+			0
+		elsif a.nil?
+			1
+		elsif b.nil?
+			-1
+		else
+			a <=> b
+		end
 	end
 end
